@@ -1,12 +1,16 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-function ShowTime({ name }) {
+function ShowTime({ name, id }) {
 
     return (
-
-        <CadaHorario>{name}</CadaHorario>
+        <Link to={`/assentos/${id}`}>
+            <CadaHorario>{name}</CadaHorario>
+        </Link>
+        
     )
 }
 
@@ -17,7 +21,7 @@ function DayMovie({ weekday, date, showtimes }) {
             <CadaDia>
                 <span>{weekday} - {date}</span>
                 <Horarios>
-                    {showtimes.map((s) => (<ShowTime key={s.id} name={s.name} />))}
+                    {showtimes.map((s) => (<ShowTime key={s.id} name={s.name} id={s.id} />))}
                 </Horarios>
 
             </CadaDia>
@@ -29,18 +33,20 @@ function DayMovie({ weekday, date, showtimes }) {
 export default function ShowTimePage() {
     const [movie, setMovie] = useState([]);
     const [days, setDays] = useState([]);
+    const {idFilme} = useParams();
 
     useEffect(() => {
-        const promise = axios.get("https://mock-api.driven.com.br/api/v5/cineflex/movies/1/showtimes")
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idFilme}/showtimes`)
 
         promise.then((res) => {
-            console.log(res.data.days)
+            //console.log(res.data.days)
+            //console.log(res.data)
             setMovie(res.data)
             setDays(res.data.days)
         })
 
         promise.catch((err) => (console.log(err.responde.data)));
-    }, [])
+    }, [idFilme])
 
     return (
         <TelaToda>
@@ -58,7 +64,7 @@ export default function ShowTimePage() {
 
             <BarraFundo>
                 <MolduraImagem>
-                    <img src={movie.posterURL} all="poster do filme" />
+                    <img src={movie.posterURL} alt="poster do filme" />
                 </MolduraImagem>
                 <p>{movie.title}</p>
             </BarraFundo>
@@ -115,10 +121,14 @@ const CadaDia = styled.div`
 
 const Horarios = styled.div`
     display: flex;
-    margin: 20px
+    margin: 20px;
+
+    a{
+        text-decoration: none
+    }
 `
 
-const CadaHorario = styled.div`
+const CadaHorario = styled.button`
     width: 83px;
     height: 43px;
     background-color: #E8833A;
@@ -127,17 +137,22 @@ const CadaHorario = styled.div`
     justify-content: center;
     align-items: center;
     color: #FFFFFF;
+    font-size: 18px;
+    font-weight: 400;
     margin: 3px;
+    text-decoration: none;
 `
 
 const BarraFundo = styled.div`
-    width: 375px;
+    width: auto;
     height: 117px;
     background-color: #DFE6ED;
     display: flex;
     align-items: center;
     position: fixed;
     bottom: 0;
+    right: 0;
+    left: 0;
 
     p{
         font-size: 26px;

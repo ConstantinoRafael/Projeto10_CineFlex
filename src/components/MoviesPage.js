@@ -1,15 +1,17 @@
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-function Movie({poster}) {
-    
+function Movie({ poster, id }) {
+
     return (
         <>
-            <CadaFilme>
-                <img src={poster} alt="capa do filme" />
-            </CadaFilme>
-           
+            <Link to={`/sessoes/${id}`}>
+                <CadaFilme>
+                    <img src={poster} alt="capa do filme" />
+                </CadaFilme>
+            </Link>
         </ >
     )
 }
@@ -18,7 +20,7 @@ export default function MoviesPage() {
     const [movies, setMovies] = useState([]);
 
     useEffect(() => {
-        const promise = axios.get("https://mock-api.driven.com.br/api/v8/cineflex/movies")
+        const promise = axios.get("https://mock-api.driven.com.br/api/v5/cineflex/movies")
 
         promise.then((res) => {
             console.log(res.data)
@@ -39,7 +41,7 @@ export default function MoviesPage() {
             </ContainerTexto>
 
             <ContainerFilmes>
-                {movies.map((mv) => <Movie key={mv.id} poster={mv.posterURL} />)}
+                {movies.map((mv) => <Movie key={mv.id} poster={mv.posterURL} id={mv.id} />)}
             </ContainerFilmes>
 
         </TelaToda>
